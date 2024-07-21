@@ -11,8 +11,6 @@ SFML_LIB_LINUX = /usr/lib
 
 SFML_INC_WIN = "/path/to/sfml"/include
 SFML_LIB_WIN = "/path/to/sfml"/lib
-SFML_INC_WIN = /home/quinten/Projects/c++/sfml/winlibs/include
-SFML_LIB_WIN = /home/quinten/Projects/c++/sfml/winlibs/lib
 
 # SFML Libraries
 SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
