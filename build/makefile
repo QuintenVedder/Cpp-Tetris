@@ -11,6 +11,8 @@ SFML_LIB_LINUX = /usr/lib
 
 SFML_INC_WIN = "/path/to/sfml"/include
 SFML_LIB_WIN = "/path/to/sfml"/lib
+SFML_INC_WIN = /home/quinten/Projects/c++/sfml/winlibs/include
+SFML_LIB_WIN = /home/quinten/Projects/c++/sfml/winlibs/lib
 
 # SFML Libraries
 SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
@@ -19,8 +21,8 @@ SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
 SRCS = ../src/main.cpp
 
 # Target executables
-TARGET_LINUX = ../chess-linux-mac
-TARGET_WIN = ../chess-windows.exe
+TARGET_LINUX = ../Tetris-linux-mac
+TARGET_WIN = ../Tetris-windows.exe
 
 # Default target
 all: $(TARGET_LINUX) $(TARGET_WIN)
