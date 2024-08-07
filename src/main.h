@@ -11,7 +11,7 @@ sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tetris");
 #include "piece.h"
 #include "utilities.cpp"
 #include "NodeStruct.h"
-#include "playerInputController.cpp"
+
 
 
 std::vector<Node> gridArray;
