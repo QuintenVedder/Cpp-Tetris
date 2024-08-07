@@ -72,3 +72,40 @@ void Piece::moveDown(){
     centerPosition = {centerPosition.x, centerPosition.y + 1.f};
     calculatePiecePositions();
 };
+
+void Piece::moveLeft(float minimumXPosition){
+    bool canMove = true;
+    for(sf::Vector2f position : getAllPositions()){
+        if(position.x <= minimumXPosition){
+            canMove = false;
+        }
+    }
+    if(canMove){
+        positions.clear();
+        centerPosition = {centerPosition.x - 1.f, centerPosition.y};
+        calculatePiecePositions();
+    }
+};
+
+void Piece::moveRight(float maximumXPosition){
+    bool canMove = true;
+    for(sf::Vector2f position : getAllPositions()){
+        if(position.x >= maximumXPosition - 1){
+            canMove = false;
+        }
+    }
+    if(canMove){
+        positions.clear();
+        centerPosition = {centerPosition.x + 1.f, centerPosition.y};
+        calculatePiecePositions();
+    }
+
+void Piece::Rotate(){
+    positions.clear();
+    if(rotation >= 4){
+        rotation = 0;
+    }else{
+        rotation++;
+    }
+    calculatePiecePositions();
+};

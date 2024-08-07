@@ -14,4 +14,7 @@ float startPositionY = 10;
 
 void initGrid(std::vector<Node>& gridArray);
 void drawGrid(std::vector<Node>& gridArray);
+void generatePiece(std::vector<Piece>& pieceArray);
+void moveActivePieceDown(std::vector<Piece>& pieceArray);
 bool checkPieceCollision(Piece& piece, std::vector<Piece> pieceArray);
+void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pressedKey, bool& KeyReleased, bool& KeyHold);

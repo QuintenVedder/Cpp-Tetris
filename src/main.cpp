@@ -13,6 +13,7 @@ int main(){
         window.clear(sf::Color::Black);
 
         frameCounter++;
+        keyPressframeCounter++;
 
         gameloop(gridArray, genPiece, pieceArray, frameCounter, interval);
         
@@ -37,7 +38,29 @@ void gameloop(std::vector<Node>& gridArray, bool& genPiece, std::vector<Piece>& 
         moveActivePieceDown(pieceArray);
         frameCounter = 0;
     }
+    std::cout<<KeyReleased<<std::endl;
+    if (event.type == sf::Event::KeyPressed) {
+        pressedKey = event.key.code;
+    }
 
-    
+    if (event.type == sf::Event::KeyReleased) {
+        KeyReleased = true;
+        holdCounter = 0;
+        KeyHold = false;
+    }else{
+        KeyReleased = false;
+        holdCounter++;
+    }
+
+    if (holdCounter >= timeToHoldKey){
+        KeyHold = true;
+        holdCounter = 0;
+    }
+
+    if (keyPressframeCounter >= keyPressInterval) {
+        movementActivePiece(pieceArray, pressedKey, KeyReleased, KeyHold);
+        keyPressframeCounter = 0;
+    }
+
     drawGrid(gridArray, pieceArray);
 }

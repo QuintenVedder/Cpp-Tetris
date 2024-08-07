@@ -50,7 +50,7 @@ void generatePiece(std::vector<Piece>& pieceArray){
 void moveActivePieceDown(std::vector<Piece>& pieceArray){
     for(Piece& piece : pieceArray){
         if(piece.active){
-            if(piece.centerPosition.y >= colLimit || checkPieceCollision(piece, pieceArray)){
+            if(checkPieceCollision(piece, pieceArray)){
                 piece.active = false;
                 generatePiece(pieceArray);
             }else{
@@ -62,16 +62,45 @@ void moveActivePieceDown(std::vector<Piece>& pieceArray){
 
 bool checkPieceCollision(Piece& piece, std::vector<Piece> pieceArray){
     for(sf::Vector2f& position : piece.getAllPositions()){
+        if(position.y >= colLimit - 1){
+            return true;
+        }
         for(Piece& comparePiece : pieceArray){
-            if(comparePiece != piece){
-                // zorg dat als piece nit vergeleken kan worden met zichzelf
-            }
-            for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
-                if(position.y >= comparePiecePosition.y - 1){
-                    return true;
+            if(comparePiece.active == false){
+                for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
+                    if(position.y >= comparePiecePosition.y - 1 && position.x == comparePiecePosition.x){
+                        return true;
+                    }
                 }
             }
         }
     }
     return false;
+};
+
+void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pressedKey, bool& KeyReleased, bool& KeyHold){
+    for(Piece& piece : pieceArray){
+        if(piece.active){
+            if (KeyReleased || KeyHold) {
+                if (pressedKey == sf::Keyboard::Left)
+                {
+                    piece.moveLeft(0);
+                }
+                else if (pressedKey == sf::Keyboard::Right)
+                {
+                    piece.moveRight(rowLimit);
+                }
+                else if (pressedKey == sf::Keyboard::Up && KeyHold == false)
+                {
+                    piece.Rotate();
+                }
+                else if (pressedKey == sf::Keyboard::Down)
+                {
+                    // piece.moveInstantDown();
+                }
+                pressedKey = sf::Keyboard::Unknown;
+                KeyReleased = false;
+            }
+        }
+    }
 };

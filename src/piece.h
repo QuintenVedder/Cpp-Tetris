@@ -25,4 +25,8 @@ class Piece {
         void calculatePiecePositions();
         std::vector<sf::Vector2f> getAllPositions();
         void moveDown();
+        void moveLeft(float minimumXPosition);
+        void moveRight(float maximumXPosition);
+        void Rotate();
+        void moveInstantDown();
 };
