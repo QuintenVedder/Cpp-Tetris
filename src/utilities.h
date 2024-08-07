@@ -16,5 +16,6 @@ void initGrid(std::vector<Node>& gridArray);
 void drawGrid(std::vector<Node>& gridArray);
 void generatePiece(std::vector<Piece>& pieceArray);
 void moveActivePieceDown(std::vector<Piece>& pieceArray);
-bool checkPieceCollision(Piece& piece, std::vector<Piece> pieceArray);
+bool checkVerticalPieceCollision(std::vector<sf::Vector2f>& positions, std::vector<Piece> pieceArray);
+bool checkHorizontalPieceCollision(std::vector<sf::Vector2f>& positions, std::vector<Piece> pieceArray, bool left, bool right);
 void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pressedKey, bool& KeyReleased, bool& KeyHold);

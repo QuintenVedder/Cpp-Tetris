@@ -4,7 +4,6 @@ int main(){
     window.setSize(sf::Vector2u(windowWidth, windowHeight)); 
 
     window.setFramerateLimit(FPS);
-
     initGrid(gridArray);
     genPiece = true;
 
@@ -34,11 +33,12 @@ void gameloop(std::vector<Node>& gridArray, bool& genPiece, std::vector<Piece>& 
         generatePiece(pieceArray);
         genPiece = false;
     }
+
     if (frameCounter >= interval) {
         moveActivePieceDown(pieceArray);
         frameCounter = 0;
     }
-    std::cout<<KeyReleased<<std::endl;
+
     if (event.type == sf::Event::KeyPressed) {
         pressedKey = event.key.code;
     }

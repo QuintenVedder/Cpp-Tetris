@@ -1,26 +1,4 @@
-# Compiler
-CXX = g++
-CXX_WIN = x86_64-w64-mingw32-g++
-
-# Compiler flags
-CXXFLAGS = -std=c++17 -static-libstdc++
-
-# SFML Paths
-SFML_INC_LINUX = /usr/include
-SFML_LIB_LINUX = /usr/lib
-
-SFML_INC_WIN = "/path/to/sfml"/include
-SFML_LIB_WIN = "/path/to/sfml"/lib
-
-# SFML Libraries
-SFML_LIBS = -lsfml-graphics -lsfml-system -lsfml-window
-
-# Source files
-SRCS = ../src/main.cpp
-
-# Target executables
-TARGET_LINUX = ../Tetris-linux-mac
-TARGET_WIN = ../Tetris-windows.exe
+include makefile.variables
 
 # Default target
 all: $(TARGET_LINUX) $(TARGET_WIN)

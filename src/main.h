@@ -21,7 +21,7 @@ bool genPiece;
 std::vector<Piece> pieceArray;
 
 const float FPS = 60;
-float multiplier = 1;
+float multiplier = 1.5f;
 float frameCounter = 0;
 float interval = FPS / multiplier;
 

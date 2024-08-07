@@ -8,13 +8,13 @@
 class Piece {
     private:
         const char shape;
-        int rotation = 1;// 1=up 2=right 3=down 4=left
 
     public:
         sf::Vector2f centerPosition;
         std::vector<sf::Vector2f> positions;
         sf::Color color;
         bool active = true;
+        int rotation = 1;// 1=up 2=right 3=down 4=left
 
         Piece(sf::Vector2f centerPosition, const char shape, sf::Color color)
             :shape{shape}, centerPosition{centerPosition}, color{color}
@@ -25,8 +25,7 @@ class Piece {
         void calculatePiecePositions();
         std::vector<sf::Vector2f> getAllPositions();
         void moveDown();
-        void moveLeft(float minimumXPosition);
-        void moveRight(float maximumXPosition);
+        void moveLeft();
+        void moveRight();
         void Rotate();
-        void moveInstantDown();
 };
