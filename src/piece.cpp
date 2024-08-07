@@ -99,6 +99,7 @@ void Piece::moveRight(float maximumXPosition){
         centerPosition = {centerPosition.x + 1.f, centerPosition.y};
         calculatePiecePositions();
     }
+};
 
 void Piece::Rotate(){
     positions.clear();
