@@ -42,8 +42,85 @@ void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray){
     }
 }
 
-void generatePiece(std::vector<Piece>& pieceArray){
-    Piece piece(sf::Vector2f{rowLimit/2, 0}, 'I', sf::Color::Blue);
+void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece> pieceArray){
+    cpp_dump("function call");
+    std::vector<float> clearableLines;
+    int clearableLineCount;
+    bool emptyNode = false;
+    for(float i = rowLimit - 1; i >= 0; --i){
+        for(float j = colLimit - 1; j >= 0; --j){
+            for(Node node : gridArray){
+                for(Piece& piece : pieceArray){
+                    if(piece.active == false){
+                        for(sf::Vector2f position : piece.getAllPositions()){
+                            if(node.position != position){
+                                emptyNode = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if(emptyNode == true){
+                    break;
+                }
+            }
+            if(emptyNode == true){
+                break;
+            }
+        }
+        if(emptyNode == false){
+            clearableLines.push_back(i);
+        }
+        emptyNode = false;
+    }
+
+    clearableLineCount = clearableLines.size();
+
+    for(Piece& piece : pieceArray){
+        if(piece.active == false){
+            for(int yPos : clearableLines){
+                if(piece.centerPosition.y == yPos){
+                    piece.centerPosition = sf::Vector2f(-9999.f, -9999.f);
+                }
+                for (sf::Vector2f& position : piece.positions) {
+                    if (position.y == yPos) {
+                        position = sf::Vector2f(-9999.f, -9999.f);
+                    }
+                }
+            }
+        }
+    }
+
+    std::vector<sf::Vector2f> piecePositions;
+    for(Piece piece : pieceArray){
+        if(piece.active == false){
+            piecePositions.push_back(piece.centerPosition);
+            if(!checkVerticalPieceCollision(piecePositions, pieceArray)){
+                piece.centerPosition.y += clearableLineCount;
+            }
+            piecePositions.clear();
+            for(sf::Vector2f& position : piece.positions){
+                piecePositions.push_back(position);
+                if(!checkVerticalPieceCollision(piecePositions, pieceArray)){
+                    position.y += clearableLineCount;
+                }
+                piecePositions.clear();
+            }
+        }
+    }
+};
+
+void generatePiece(std::vector<Piece>& pieceArray, std::vector<std::vector<char>>& bag){
+    lineCheckAndClear(gridArray, pieceArray);
+    std::vector<char>& set = bag.front();
+    char piecShape = set.front();
+    if(set.size() <= 1){
+        bag.erase(bag.begin());
+    }else{
+        set.erase(set.begin());
+    }
+
+    Piece piece(sf::Vector2f{rowLimit/2, 0}, piecShape, tetrisColors[piecShape]);
     pieceArray.emplace_back(piece);
 }
 
@@ -53,7 +130,7 @@ void moveActivePieceDown(std::vector<Piece>& pieceArray){
             std::vector<sf::Vector2f> positions = piece.getAllPositions();
             if(checkVerticalPieceCollision(positions, pieceArray)){
                 piece.active = false;
-                generatePiece(pieceArray);
+                generatePiece(pieceArray, bag);
             }else{
                 piece.moveDown();
             }
@@ -61,7 +138,7 @@ void moveActivePieceDown(std::vector<Piece>& pieceArray){
     }
 };
 
-bool checkVerticalPieceCollision(std::vector<sf::Vector2f>& positions, std::vector<Piece> pieceArray){
+bool checkVerticalPieceCollision(std::vector<sf::Vector2f> positions, std::vector<Piece> pieceArray){
     for(sf::Vector2f& position : positions){
         if(position.y >= colLimit - 1){
             return true;
@@ -69,7 +146,7 @@ bool checkVerticalPieceCollision(std::vector<sf::Vector2f>& positions, std::vect
         for(Piece& comparePiece : pieceArray){
             if(comparePiece.active == false){
                 for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
-                    if(position.y >= comparePiecePosition.y - 1 && position.x == comparePiecePosition.x){
+                    if(position.y == comparePiecePosition.y - 1 && position.x == comparePiecePosition.x){
                         return true;
                     }
                 }
@@ -79,10 +156,10 @@ bool checkVerticalPieceCollision(std::vector<sf::Vector2f>& positions, std::vect
     return false;
 };
 
-bool checkHorizontalPieceCollision(std::vector<sf::Vector2f>& positions, std::vector<Piece> pieceArray, bool left, bool right){
+bool checkHorizontalPieceCollision(std::vector<sf::Vector2f> positions, std::vector<Piece> pieceArray, bool left, bool right){
     for(sf::Vector2f& position : positions){
         if(left){
-            if(position.x <= 0){
+            if(position.x < 1){
                 return true;
             }
             for(Piece& comparePiece : pieceArray){
@@ -113,6 +190,27 @@ bool checkHorizontalPieceCollision(std::vector<sf::Vector2f>& positions, std::ve
     return false;
 };
 
+bool checkRotatedPieceCollision(std::vector<sf::Vector2f> positions, std::vector<Piece> pieceArray){
+    for(sf::Vector2f& position : positions){
+        if(position.x < 0){
+            return true;
+        }
+        if(position.x >= rowLimit){
+            return true;
+        }
+        for(Piece& comparePiece : pieceArray){
+            if(comparePiece.active == false){
+                for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
+                    if(position.y == comparePiecePosition.y && position.x == comparePiecePosition.x){
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+};
+
 void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pressedKey, bool& KeyReleased, bool& KeyHold){
     for(Piece& piece : pieceArray){
         if(piece.active){
@@ -120,66 +218,69 @@ void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pres
             if (KeyReleased || KeyHold) {
                 if (pressedKey == sf::Keyboard::Left)
                 {
-                    if(!checkHorizontalPieceCollision(activePiecePositions, pieceArray, true, false)){
+                    if(!checkHorizontalPieceCollision(activePiecePositions, pieceArray, true, false) && !checkVerticalPieceCollision(activePiecePositions, pieceArray)){
                         piece.moveLeft();
                     }
                 }
                 else if (pressedKey == sf::Keyboard::Right)
                 {
-                    if(!checkHorizontalPieceCollision(activePiecePositions, pieceArray, false, true)){
+                    if(!checkHorizontalPieceCollision(activePiecePositions, pieceArray, false, true) && !checkVerticalPieceCollision(activePiecePositions, pieceArray)){
                         piece.moveRight();
                     }
                 }
                 else if (pressedKey == sf::Keyboard::Up && KeyHold == false)
                 {
-                    bool canRotate = false;
-
-                    piece.rotation++;
-                    piece.calculatePiecePositions();
-                    activePiecePositions = piece.getAllPositions();
-
-                    if(!checkHorizontalPieceCollision(activePiecePositions, pieceArray, true, true)){
-                        canRotate = true;
-                    }
-
-                    piece.rotation--;
-                    piece.calculatePiecePositions();
-                    activePiecePositions = piece.getAllPositions();
-                    if(canRotate){
+                    std::vector<sf::Vector2f> positions = MOCK_calculatePiecePositions(piece.centerPosition, piece.shape, MOCK_Rotate(piece.rotation));
+                    if(!checkRotatedPieceCollision(positions, pieceArray)){
                         piece.Rotate();
-                        canRotate = false;
+                        activePiecePositions = piece.getAllPositions();
                     }
+                    positions.clear();
                 }
-                else if (pressedKey == sf::Keyboard::Down)
+                else if (pressedKey == sf::Keyboard::Down && KeyHold == false)
                 {
                     bool canInstantDown = false;
 
                     std::vector<sf::Vector2f> tempRestorationPositions = piece.getAllPositions();
                     activePiecePositions = piece.getAllPositions();
-                    for(int i = 1; i < colLimit+2; i++){
+                    for(int i = 0; i <= colLimit; i++){
                         for(sf::Vector2f& position : activePiecePositions){
-                            position.x += i;
+                            position.y += 1;
                         }
                         if(checkVerticalPieceCollision(activePiecePositions, pieceArray)){
-                            std::cout<<"WAT DE KANKER"<<std::endl;
                             canInstantDown = true;
                             break;
                         }
                     }
 
                     if(canInstantDown){
-                        for(sf::Vector2f& position : activePiecePositions){
-                            position.x -= 1;
-                        }
+                        sf::Vector2f centerPosition = activePiecePositions.back();
+                        activePiecePositions.pop_back();
 
                         piece.positions = activePiecePositions;
+                        piece.centerPosition = centerPosition;
+                        piece.active = false;
+                        generatePiece(pieceArray, bag);
                     }else{
+                        sf::Vector2f centerPosition = tempRestorationPositions.back();
+                        tempRestorationPositions.pop_back();
+
                         piece.positions = tempRestorationPositions;
+                        piece.centerPosition = centerPosition;
                     }
                 }
                 pressedKey = sf::Keyboard::Unknown;
                 KeyReleased = false;
             }
         }
+    }
+};
+
+void generateBag(std::vector<char>pieceShapes, std::vector<std::vector<char>>& bag, int bagSize){
+    for(int i = bag.size(); i < bagSize; i++){
+        std::random_device rd;
+        std::default_random_engine rng(rd());
+        std::shuffle(pieceShapes.begin(), pieceShapes.end(), rng);
+        bag.push_back(pieceShapes);
     }
 };

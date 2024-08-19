@@ -1,7 +1,11 @@
-#include "piece.h"
+#pragma once
 
-void Piece::calculatePiecePositions() {
-    positions.clear();
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <vector>
+
+std::vector<sf::Vector2f> MOCK_calculatePiecePositions(sf::Vector2f centerPosition, char shape, int rotation) {
+    std::vector<sf::Vector2f> positions;
     switch (shape) {
         case 'I':
             if(rotation % 2 == 0){
@@ -126,42 +130,15 @@ void Piece::calculatePiecePositions() {
             std::cout << shape << std::endl;
             break;
     }
+
+    return positions;
 };
 
-std::vector<sf::Vector2f> Piece::getAllPositions() {
-    std::vector<sf::Vector2f> allPositions;
-    for(sf::Vector2f position : positions){
-        allPositions.push_back(position);
-    }
-    allPositions.push_back(centerPosition);
-
-    return allPositions;
-};
-
-void Piece::moveDown(){
-    positions.clear();
-    centerPosition = {centerPosition.x, centerPosition.y + 1.f};
-    calculatePiecePositions();
-};
-
-void Piece::moveLeft(){
-    positions.clear();
-    centerPosition = {centerPosition.x - 1.f, centerPosition.y};
-    calculatePiecePositions();
-};
-
-void Piece::moveRight(){
-    positions.clear();
-    centerPosition = {centerPosition.x + 1.f, centerPosition.y};
-    calculatePiecePositions();
-};
-
-void Piece::Rotate(){
-    positions.clear();
+int MOCK_Rotate(int rotation){
     if(rotation >= 4){
         rotation = 1;
     }else{
         rotation++;
     }
-    calculatePiecePositions();
+    return rotation;
 };

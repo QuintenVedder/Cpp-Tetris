@@ -3,21 +3,24 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "NodeStruct.h"
 
 const int windowWidth = 1000;
 const int windowHeight = 1000;
 sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tetris");
+std::vector<char> pieceShapes = {'I', 'L', 'J', 'O', 'T', 'S', 'Z'};
+std::vector<std::vector<char>> bag;
+int bagSize = 3;
+std::vector<Node> gridArray;
 
 #include "piece.h"
 #include "utilities.cpp"
-#include "NodeStruct.h"
 
 
 
-std::vector<Node> gridArray;
 sf::Event event;
 
-bool genPiece;
+bool genPiece = true;
 std::vector<Piece> pieceArray;
 
 const float FPS = 60;

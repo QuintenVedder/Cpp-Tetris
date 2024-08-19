@@ -5,7 +5,7 @@ int main(){
 
     window.setFramerateLimit(FPS);
     initGrid(gridArray);
-    genPiece = true;
+    generateBag(pieceShapes, bag, bagSize);
 
     while (window.isOpen())
     {
@@ -29,38 +29,40 @@ int main(){
     return 0;
 }
 void gameloop(std::vector<Node>& gridArray, bool& genPiece, std::vector<Piece>& pieceArray, float& frameCounter, float& interval){
+    generateBag(pieceShapes, bag, bagSize);
     if(genPiece == true){
-        generatePiece(pieceArray);
+        generatePiece(pieceArray, bag);
         genPiece = false;
     }
 
     if (frameCounter >= interval) {
         moveActivePieceDown(pieceArray);
         frameCounter = 0;
-    }
-
-    if (event.type == sf::Event::KeyPressed) {
-        pressedKey = event.key.code;
-    }
-
-    if (event.type == sf::Event::KeyReleased) {
-        KeyReleased = true;
-        holdCounter = 0;
-        KeyHold = false;
     }else{
-        KeyReleased = false;
-        holdCounter++;
+        if (event.type == sf::Event::KeyPressed) {
+            pressedKey = event.key.code;
+        }
+
+        if (event.type == sf::Event::KeyReleased) {
+            KeyReleased = true;
+            holdCounter = 0;
+            KeyHold = false;
+        }else{
+            KeyReleased = false;
+            holdCounter++;
+        }
+
+        if (holdCounter >= timeToHoldKey){
+            KeyHold = true;
+            holdCounter = 0;
+        }
+
+        if (keyPressframeCounter >= keyPressInterval) {
+            movementActivePiece(pieceArray, pressedKey, KeyReleased, KeyHold);
+            keyPressframeCounter = 0;
+        }
     }
 
-    if (holdCounter >= timeToHoldKey){
-        KeyHold = true;
-        holdCounter = 0;
-    }
-
-    if (keyPressframeCounter >= keyPressInterval) {
-        movementActivePiece(pieceArray, pressedKey, KeyReleased, KeyHold);
-        keyPressframeCounter = 0;
-    }
 
     drawGrid(gridArray, pieceArray);
 }

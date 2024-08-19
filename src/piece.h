@@ -7,9 +7,8 @@
 
 class Piece {
     private:
-        const char shape;
-
     public:
+        const char shape;
         sf::Vector2f centerPosition;
         std::vector<sf::Vector2f> positions;
         sf::Color color;
