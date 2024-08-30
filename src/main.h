@@ -10,6 +10,7 @@ const int windowHeight = 1000;
 sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tetris");
 std::vector<char> pieceShapes = {'I', 'L', 'J', 'O', 'T', 'S', 'Z'};
 std::vector<std::vector<char>> bag;
+char holdingPiece = ' ';
 int bagSize = 3;
 std::vector<Node> gridArray;
 

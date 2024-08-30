@@ -40,20 +40,9 @@ void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray){
             }
         }
     }
+    drawExtraUi();
     if(gameover){
         drawGameoverScreen();
-    }else{
-        sf::Font font;
-        if (!font.loadFromFile("../assets/arial.ttf")) {
-            std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
-        }
-        sf::Text text;
-        text.setFont(font);
-        text.setPosition(sf::Vector2f(0.f, 0.f));
-        text.setString("score: " + std::to_string(points) + "\nlevel: " + std::to_string(level));
-        text.setCharacterSize(24);
-        text.setFillColor(sf::Color::White);
-        window.draw(text);
     }
 };
 
@@ -292,6 +281,9 @@ void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pres
                         piece.centerPosition = centerPosition;
                     }
                 }
+                else if (pressedKey == sf::Keyboard::Space && KeyHold == false){
+                    //yet to be made
+                }
                 pressedKey = sf::Keyboard::Unknown;
                 KeyReleased = false;
             }
@@ -342,4 +334,51 @@ void drawGameoverScreen(){
     text.setCharacterSize(24);
     text.setFillColor(sf::Color::White);
     window.draw(text);
-}
+};
+void drawExtraUi(){
+    sf::Font font;
+    if (!font.loadFromFile("../assets/arial.ttf")) {
+        std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
+    }
+    sf::Text text;
+    text.setFont(font);
+    text.setPosition(sf::Vector2f(0.f, 0.f));
+    text.setString("score: " + std::to_string(points) + "\nlevel: " + std::to_string(level));
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    window.draw(text);
+
+    sf::Vector2f nextInBagUiPos = {800.f, 200.f};
+    sf::Vector2f nextInBagUiSize = {100.f, 100.f};
+    drawSmallRect(nextInBagUiPos, nextInBagUiSize);
+    drawSmallPieceShape(nextInBagUiPos, nextInBagUiSize);
+
+
+};
+
+void drawSmallRect(sf::Vector2f pos, sf::Vector2f size){
+    sf::RectangleShape rect;
+    rect.setSize(size);
+    rect.setOutlineColor(sf::Color(255,255,255));
+    rect.setOutlineThickness(2);
+    rect.setPosition(pos);
+    rect.setFillColor(sf::Color(0,0,0));
+    window.draw(rect);
+};
+
+void drawSmallPieceShape(sf::Vector2f pos, sf::Vector2f size){
+    sf::Vector2f blockSize = {15.f, 15.f};
+    sf::Vector2f centerPos = {pos.x + (size.x/2.f) - blockSize.x/2.f, pos.y + (size.y/2.f) - blockSize.y/2.f};
+    std::vector<char>& set = bag.front();
+    char piecShape = set.front();
+    std::vector<sf::Vector2f> positions = extraUiPiecePositions[piecShape](centerPos, blockSize);
+    for(sf::Vector2f position : positions){
+        sf::RectangleShape rect;
+        rect.setSize(blockSize);
+        rect.setOutlineColor(sf::Color(255,255,255));
+        rect.setOutlineThickness(1);
+        rect.setPosition(position);
+        rect.setFillColor(tetrisColors[piecShape]);
+        window.draw(rect);
+    }
+};

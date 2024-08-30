@@ -27,6 +27,67 @@ std::map<char, sf::Color> tetrisColors = {
     {'L', sf::Color(220, 160, 20)},  // Slightly Darkened Orange
 };
 
+
+std::map<char, std::function<std::vector<sf::Vector2f>(sf::Vector2f&, sf::Vector2f&)>> extraUiPiecePositions = {
+    // a nice dose of pixel precision was needed because the borders would clip into eachother
+    {'I', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x - (blockSize.x/2.f) - blockSize.x, centerPosition.y},
+            {centerPosition.x - (blockSize.x/2.f), centerPosition.y},
+            {centerPosition.x + (blockSize.x/2.f), centerPosition.y},
+            {centerPosition.x + (blockSize.x/2.f) + blockSize.x, centerPosition.y},
+        };
+    }},
+    {'O', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x - (blockSize.x/2.f) - 1.f, centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x + (blockSize.x/2.f), centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x + (blockSize.x/2.f), centerPosition.y + (blockSize.y/2.f)},
+            {centerPosition.x - (blockSize.x/2.f) - 1.f, centerPosition.y + (blockSize.y/2.f)},
+        };
+    }},
+    {'T', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x, centerPosition.y - blockSize.y},
+            {centerPosition.x - blockSize.x, centerPosition.y},
+            {centerPosition.x + blockSize.x, centerPosition.y},
+            {centerPosition.x, centerPosition.y},
+        };
+    }},
+    {'S', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x, centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x + blockSize.x, centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x - 1.f, centerPosition.y + (blockSize.y/2.f)},
+            {centerPosition.x - blockSize.x - 1.f, centerPosition.y + (blockSize.y/2.f)},
+        };
+    }},
+    {'Z', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x, centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x - blockSize.x, centerPosition.y - (blockSize.y/2.f) - 1.f},
+            {centerPosition.x + 1.f, centerPosition.y + (blockSize.y/2.f)},
+            {centerPosition.x + blockSize.x + 1.f, centerPosition.y + (blockSize.y/2.f)},
+        };
+    }},
+    {'J', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x, centerPosition.y - blockSize.y},
+            {centerPosition.x, centerPosition.y},
+            {centerPosition.x - blockSize.x, centerPosition.y + blockSize.y},
+            {centerPosition.x , centerPosition.y + blockSize.y},
+        };
+    }},
+    {'L', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
+        return std::vector<sf::Vector2f>{
+            {centerPosition.x, centerPosition.y - blockSize.y},
+            {centerPosition.x, centerPosition.y},
+            {centerPosition.x + blockSize.x, centerPosition.y + blockSize.y},
+            {centerPosition.x , centerPosition.y + blockSize.y},
+        };
+    }},
+};
+
 void initGrid(std::vector<Node>& gridArray);
 void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray);
 void generatePiece(std::vector<Piece>& pieceArray, std::vector<std::vector<char>>& bag);
@@ -40,3 +101,6 @@ void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece>& pieceArr
 void updatePointsAndLevel(int lineCount);
 void checkGameover(std::vector<Piece> pieceArray);
 void drawGameoverScreen();
+void drawExtraUi();
+void drawSmallRect(sf::Vector2f pos, sf::Vector2f size);
+void drawSmallPieceShape(sf::Vector2f pos, sf::Vector2f size);
