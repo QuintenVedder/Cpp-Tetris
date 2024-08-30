@@ -9,6 +9,7 @@
 #include "mock_piece_functions.h"
 #include <algorithm>
 #include <random>
+#include <string>
 
 const float rowLimit = 10;
 const float colLimit = 20;
@@ -27,7 +28,7 @@ std::map<char, sf::Color> tetrisColors = {
 };
 
 void initGrid(std::vector<Node>& gridArray);
-void drawGrid(std::vector<Node>& gridArray);
+void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray);
 void generatePiece(std::vector<Piece>& pieceArray, std::vector<std::vector<char>>& bag);
 void moveActivePieceDown(std::vector<Piece>& pieceArray);
 bool checkVerticalPieceCollision(std::vector<sf::Vector2f> positions, std::vector<Piece> pieceArray);
@@ -35,4 +36,7 @@ bool checkHorizontalPieceCollision(std::vector<sf::Vector2f> positions, std::vec
 void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pressedKey, bool& KeyReleased, bool& KeyHold);
 void generateBag(std::vector<char>pieceShapes, std::vector<std::vector<char>>& bag, int bagSize);
 bool checkRotatedPieceCollision(std::vector<sf::Vector2f> positions, std::vector<Piece> pieceArray);
-void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece> pieceArray);
+void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece>& pieceArray);
+void updatePointsAndLevel(int lineCount);
+void checkGameover(std::vector<Piece> pieceArray);
+void drawGameoverScreen();

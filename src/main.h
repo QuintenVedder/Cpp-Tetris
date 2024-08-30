@@ -13,6 +13,11 @@ std::vector<std::vector<char>> bag;
 int bagSize = 3;
 std::vector<Node> gridArray;
 
+bool gameover = false;
+int points = 0;
+int level = 1;
+float multiplier = 1.5f;
+
 #include "piece.h"
 #include "utilities.cpp"
 
@@ -24,7 +29,6 @@ bool genPiece = true;
 std::vector<Piece> pieceArray;
 
 const float FPS = 60;
-float multiplier = 1.5f;
 float frameCounter = 0;
 float interval = FPS / multiplier;
 

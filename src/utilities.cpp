@@ -28,7 +28,7 @@ void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray){
         for(Piece& piece : pieceArray){
             std::vector<sf::Vector2f> positions = piece.getAllPositions();
             for(sf::Vector2f& position : positions){
-                if(position == node.position){
+                if(position == node.position && position != sf::Vector2f(-99.f, -99.f)){
                     sf::RectangleShape rect;
                     rect.setSize(rectSize);
                     rect.setOutlineColor(node.outlineColor);
@@ -40,73 +40,95 @@ void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray){
             }
         }
     }
-}
+    if(gameover){
+        drawGameoverScreen();
+    }else{
+        sf::Font font;
+        if (!font.loadFromFile("../assets/arial.ttf")) {
+            std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
+        }
+        sf::Text text;
+        text.setFont(font);
+        text.setPosition(sf::Vector2f(0.f, 0.f));
+        text.setString("score: " + std::to_string(points) + "\nlevel: " + std::to_string(level));
+        text.setCharacterSize(24);
+        text.setFillColor(sf::Color::White);
+        window.draw(text);
+    }
+};
 
-void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece> pieceArray){
-    cpp_dump("function call");
+void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece>& pieceArray){
     std::vector<float> clearableLines;
-    int clearableLineCount;
-    bool emptyNode = false;
-    for(float i = rowLimit - 1; i >= 0; --i){
-        for(float j = colLimit - 1; j >= 0; --j){
-            for(Node node : gridArray){
-                for(Piece& piece : pieceArray){
-                    if(piece.active == false){
-                        for(sf::Vector2f position : piece.getAllPositions()){
-                            if(node.position != position){
-                                emptyNode = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                if(emptyNode == true){
-                    break;
-                }
-            }
-            if(emptyNode == true){
-                break;
+    float clearableLineCount = 0;
+    int filledNodeCount = 0;
+
+    std::vector<sf::Vector2f> allPiecePositions;
+    for(Piece& piece : pieceArray){
+        if(piece.active == false){
+            for(sf::Vector2f position : piece.getAllPositions()){
+                allPiecePositions.push_back(position);
             }
         }
-        if(emptyNode == false){
-            clearableLines.push_back(i);
+    }
+
+    for(float col = colLimit - 1; col >= 0; --col){
+        for(float row = rowLimit - 1; row >= 0; --row){
+
+            for(sf::Vector2f position : allPiecePositions){
+                if(position == sf::Vector2f(row, col)){
+                    filledNodeCount++;
+                }
+
+            }
         }
-        emptyNode = false;
+        if(filledNodeCount == 10){
+            clearableLines.push_back(col);
+        }
+        filledNodeCount = 0;
     }
 
     clearableLineCount = clearableLines.size();
+    updatePointsAndLevel(clearableLineCount);
 
-    for(Piece& piece : pieceArray){
-        if(piece.active == false){
-            for(int yPos : clearableLines){
-                if(piece.centerPosition.y == yPos){
-                    piece.centerPosition = sf::Vector2f(-9999.f, -9999.f);
-                }
-                for (sf::Vector2f& position : piece.positions) {
-                    if (position.y == yPos) {
-                        position = sf::Vector2f(-9999.f, -9999.f);
+    if(clearableLineCount > 0){
+        for(Piece& piece : pieceArray){
+            if(piece.active == false){
+                for(float yPos : clearableLines){
+                    if(piece.centerPosition.y == yPos){
+                        piece.centerPosition = sf::Vector2f(-99.f, -99.f);
+                    }
+                    for (sf::Vector2f& position : piece.positions) {
+                        if (position.y == yPos) {
+                            position = sf::Vector2f(-99.f, -99.f);
+                        }
                     }
                 }
             }
         }
-    }
 
-    std::vector<sf::Vector2f> piecePositions;
-    for(Piece piece : pieceArray){
-        if(piece.active == false){
-            piecePositions.push_back(piece.centerPosition);
-            if(!checkVerticalPieceCollision(piecePositions, pieceArray)){
-                piece.centerPosition.y += clearableLineCount;
-            }
-            piecePositions.clear();
-            for(sf::Vector2f& position : piece.positions){
-                piecePositions.push_back(position);
-                if(!checkVerticalPieceCollision(piecePositions, pieceArray)){
-                    position.y += clearableLineCount;
+        std::vector<sf::Vector2f> piecePositions;
+        for(float col = clearableLines[0]; col >= 0; --col){
+            for(Piece& piece : pieceArray){
+                if(piece.active == false){
+                    if(piece.centerPosition.y == col){
+                        if(!checkVerticalPieceCollision({piece.centerPosition}, pieceArray)){
+                            piece.centerPosition.y += clearableLineCount;
+                        }
+                    }
+                    for(sf::Vector2f& position : piece.positions){
+                        if(position.y == col){
+                            piecePositions.push_back(position);
+                            if(!checkVerticalPieceCollision(piecePositions, pieceArray)){
+                                position.y += clearableLineCount;
+                            }
+                            piecePositions.clear();
+                        }
+                    }
                 }
-                piecePositions.clear();
             }
+            drawGrid(gridArray, pieceArray);
         }
+
     }
 };
 
@@ -130,6 +152,7 @@ void moveActivePieceDown(std::vector<Piece>& pieceArray){
             std::vector<sf::Vector2f> positions = piece.getAllPositions();
             if(checkVerticalPieceCollision(positions, pieceArray)){
                 piece.active = false;
+                checkGameover(pieceArray);
                 generatePiece(pieceArray, bag);
             }else{
                 piece.moveDown();
@@ -143,9 +166,9 @@ bool checkVerticalPieceCollision(std::vector<sf::Vector2f> positions, std::vecto
         if(position.y >= colLimit - 1){
             return true;
         }
-        for(Piece& comparePiece : pieceArray){
+        for(Piece comparePiece : pieceArray){
             if(comparePiece.active == false){
-                for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
+                for(sf::Vector2f comparePiecePosition : comparePiece.getAllPositions()){
                     if(position.y == comparePiecePosition.y - 1 && position.x == comparePiecePosition.x){
                         return true;
                     }
@@ -162,9 +185,9 @@ bool checkHorizontalPieceCollision(std::vector<sf::Vector2f> positions, std::vec
             if(position.x < 1){
                 return true;
             }
-            for(Piece& comparePiece : pieceArray){
+            for(Piece comparePiece : pieceArray){
                 if(comparePiece.active == false){
-                    for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
+                    for(sf::Vector2f comparePiecePosition : comparePiece.getAllPositions()){
                         if(position.y == comparePiecePosition.y && position.x == comparePiecePosition.x + 1){
                             return true;
                         }
@@ -176,9 +199,9 @@ bool checkHorizontalPieceCollision(std::vector<sf::Vector2f> positions, std::vec
             if(position.x >= rowLimit - 1){
                 return true;
             }
-            for(Piece& comparePiece : pieceArray){
+            for(Piece comparePiece : pieceArray){
                 if(comparePiece.active == false){
-                    for(sf::Vector2f& comparePiecePosition : comparePiece.getAllPositions()){
+                    for(sf::Vector2f comparePiecePosition : comparePiece.getAllPositions()){
                         if(position.y == comparePiecePosition.y && position.x == comparePiecePosition.x - 1){
                             return true;
                         }
@@ -284,3 +307,39 @@ void generateBag(std::vector<char>pieceShapes, std::vector<std::vector<char>>& b
         bag.push_back(pieceShapes);
     }
 };
+
+void updatePointsAndLevel(int lineCount){
+    points += (lineCount * 10) * level;
+    points >= 100 ? level = floor(points / 100) : level = 1;
+    multiplier += static_cast<float>(level) / 10.0f;
+};
+
+void checkGameover(std::vector<Piece> pieceArray){
+    for(Piece piece : pieceArray){
+        for(sf::Vector2f pos : piece.getAllPositions()){
+            if(pos.y < 0){
+                gameover = true;
+            }
+        }
+    }
+}
+
+void drawGameoverScreen(){
+    sf::RectangleShape rect;
+    rect.setSize({1000.f, 1000.f});
+    rect.setPosition({0.f, 0.f});
+    rect.setFillColor(sf::Color(0,0,0,100));
+    window.draw(rect);
+
+    sf::Font font;
+    if (!font.loadFromFile("../assets/arial.ttf")) {
+        std::cerr<< "was not able to load font -> arial.ttf"<<std::endl;
+    }
+    sf::Text text;
+    text.setFont(font);
+    text.setPosition(sf::Vector2f(400.f, 400.f));
+    text.setString("well done! your score is: " + std::to_string(points));
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+    window.draw(text);
+}
