@@ -103,4 +103,5 @@ void checkGameover(std::vector<Piece> pieceArray);
 void drawGameoverScreen();
 void drawExtraUi();
 void drawSmallRect(sf::Vector2f pos, sf::Vector2f size);
-void drawSmallPieceShape(sf::Vector2f pos, sf::Vector2f size);
+void drawSmallPieceShapeNextInBag(sf::Vector2f pos, sf::Vector2f size);
+void drawSmallPieceShapeHold(sf::Vector2f pos, sf::Vector2f size);

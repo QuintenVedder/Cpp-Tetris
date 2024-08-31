@@ -17,21 +17,21 @@ std::vector<Node> gridArray;
 bool gameover = false;
 int points = 0;
 int level = 1;
+
 float multiplier = 1.5f;
 
 #include "piece.h"
 #include "utilities.cpp"
 
+const float FPS = 60;
+float frameCounter = 0;
+float interval = FPS;
 
 
 sf::Event event;
 
 bool genPiece = true;
 std::vector<Piece> pieceArray;
-
-const float FPS = 60;
-float frameCounter = 0;
-float interval = FPS / multiplier;
 
 float keyPressframeCounter = 0;
 float keyPressInterval = 1 / multiplier;

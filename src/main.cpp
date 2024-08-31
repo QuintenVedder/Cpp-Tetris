@@ -13,6 +13,7 @@ int main(){
 
         frameCounter++;
         keyPressframeCounter++;
+        interval = FPS / multiplier;
 
         gameloop(gridArray, genPiece, pieceArray, frameCounter, interval);
         

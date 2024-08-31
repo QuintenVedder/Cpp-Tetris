@@ -77,9 +77,9 @@ void lineCheckAndClear(std::vector<Node> gridArray, std::vector<Piece>& pieceArr
     }
 
     clearableLineCount = clearableLines.size();
-    updatePointsAndLevel(clearableLineCount);
 
     if(clearableLineCount > 0){
+        updatePointsAndLevel(clearableLineCount);
         for(Piece& piece : pieceArray){
             if(piece.active == false){
                 for(float yPos : clearableLines){
@@ -282,7 +282,24 @@ void movementActivePiece(std::vector<Piece>& pieceArray, sf::Keyboard::Key& pres
                     }
                 }
                 else if (pressedKey == sf::Keyboard::Space && KeyHold == false){
-                    //yet to be made
+                    // remove piece
+                    for(sf::Vector2f& position : piece.positions){
+                        position = {-99.f, -99.f};
+                    }
+                    piece.centerPosition = {-99.f, -99.f};
+                    piece.active = false;
+
+                    // remove first bag and save piece
+                    std::vector<char>& set = bag.front();
+
+                    // if holding add hold to bag -> set as first
+                    if(holdingPiece != ' '){
+                        set.insert(set.begin(), holdingPiece); 
+                    }
+                    holdingPiece = piece.shape;
+
+                    // generate piece
+                    generatePiece(pieceArray, bag);
                 }
                 pressedKey = sf::Keyboard::Unknown;
                 KeyReleased = false;
@@ -301,20 +318,22 @@ void generateBag(std::vector<char>pieceShapes, std::vector<std::vector<char>>& b
 };
 
 void updatePointsAndLevel(int lineCount){
-    points += (lineCount * 10) * level;
-    points >= 100 ? level = floor(points / 100) : level = 1;
+    points += ((lineCount * 2) * 10) * level;
+    level = points >= 100 ? floor(sqrt(points / 100)) : 1;
     multiplier += static_cast<float>(level) / 10.0f;
 };
 
 void checkGameover(std::vector<Piece> pieceArray){
     for(Piece piece : pieceArray){
-        for(sf::Vector2f pos : piece.getAllPositions()){
-            if(pos.y < 0){
-                gameover = true;
+        if(piece.active == false){
+            for(sf::Vector2f pos : piece.getAllPositions()){
+                if(pos.y < 1.f && pos.y > -10.f){
+                    gameover = true;
+                }
             }
         }
     }
-}
+};
 
 void drawGameoverScreen(){
     sf::RectangleShape rect;
@@ -335,6 +354,7 @@ void drawGameoverScreen(){
     text.setFillColor(sf::Color::White);
     window.draw(text);
 };
+
 void drawExtraUi(){
     sf::Font font;
     if (!font.loadFromFile("../assets/arial.ttf")) {
@@ -351,7 +371,12 @@ void drawExtraUi(){
     sf::Vector2f nextInBagUiPos = {800.f, 200.f};
     sf::Vector2f nextInBagUiSize = {100.f, 100.f};
     drawSmallRect(nextInBagUiPos, nextInBagUiSize);
-    drawSmallPieceShape(nextInBagUiPos, nextInBagUiSize);
+    drawSmallPieceShapeNextInBag(nextInBagUiPos, nextInBagUiSize);
+
+    sf::Vector2f holdUiPos = {800.f, 400.f};
+    sf::Vector2f holdUiSize = {100.f, 100.f};
+    drawSmallRect(holdUiPos, holdUiSize);
+    drawSmallPieceShapeHold(holdUiPos, holdUiSize);
 
 
 };
@@ -366,7 +391,7 @@ void drawSmallRect(sf::Vector2f pos, sf::Vector2f size){
     window.draw(rect);
 };
 
-void drawSmallPieceShape(sf::Vector2f pos, sf::Vector2f size){
+void drawSmallPieceShapeNextInBag(sf::Vector2f pos, sf::Vector2f size){
     sf::Vector2f blockSize = {15.f, 15.f};
     sf::Vector2f centerPos = {pos.x + (size.x/2.f) - blockSize.x/2.f, pos.y + (size.y/2.f) - blockSize.y/2.f};
     std::vector<char>& set = bag.front();
@@ -380,5 +405,22 @@ void drawSmallPieceShape(sf::Vector2f pos, sf::Vector2f size){
         rect.setPosition(position);
         rect.setFillColor(tetrisColors[piecShape]);
         window.draw(rect);
+    }
+};
+
+void drawSmallPieceShapeHold(sf::Vector2f pos, sf::Vector2f size){
+    if(holdingPiece != ' '){
+        sf::Vector2f blockSize = {15.f, 15.f};
+        sf::Vector2f centerPos = {pos.x + (size.x/2.f) - blockSize.x/2.f, pos.y + (size.y/2.f) - blockSize.y/2.f};
+        std::vector<sf::Vector2f> positions = extraUiPiecePositions[holdingPiece](centerPos, blockSize);
+        for(sf::Vector2f position : positions){
+            sf::RectangleShape rect;
+            rect.setSize(blockSize);
+            rect.setOutlineColor(sf::Color(255,255,255));
+            rect.setOutlineThickness(1);
+            rect.setPosition(position);
+            rect.setFillColor(tetrisColors[holdingPiece]);
+            window.draw(rect);
+        }
     }
 };
