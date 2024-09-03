@@ -1,2 +1,6 @@
 # Cpp-Tetris
- Tetris in c++ using sfml
+ Tetris made with c++ using sfml
+
+ # Yet to be done
+- adding documentation branch
+- working windows executable
