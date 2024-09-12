@@ -5,6 +5,7 @@
 #include "NodeStruct.h"
 #include <vector>
 
+//a class for pieces...
 class Piece {
     private:
     public:

@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+// mocking the functionallity of the calculatePiecePositions() function of the piece class, used for checking collision before moving a piece
 std::vector<sf::Vector2f> MOCK_calculatePiecePositions(sf::Vector2f centerPosition, char shape, int rotation) {
     std::vector<sf::Vector2f> positions;
     switch (shape) {
@@ -134,6 +135,7 @@ std::vector<sf::Vector2f> MOCK_calculatePiecePositions(sf::Vector2f centerPositi
     return positions;
 };
 
+// mocking the functionallity of the Rotate() function of the piece class, used for checking collision before rotating a piece
 int MOCK_Rotate(int rotation){
     if(rotation >= 4){
         rotation = 1;

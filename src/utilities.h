@@ -17,6 +17,7 @@ const sf::Vector2f rectSize(40, 40);
 float startPositionX = (windowWidth - (10 * rectSize.x)) / 2;
 float startPositionY = 10;
 
+// fancy colors for maxium enjoyment
 std::map<char, sf::Color> tetrisColors = {
     {'I', sf::Color(0, 200, 200)},   // Slightly Darkened Cyan
     {'O', sf::Color(200, 200, 0)},   // Slightly Darkened Yellow
@@ -29,7 +30,7 @@ std::map<char, sf::Color> tetrisColors = {
 
 
 std::map<char, std::function<std::vector<sf::Vector2f>(sf::Vector2f&, sf::Vector2f&)>> extraUiPiecePositions = {
-    // a nice dose of pixel precision was needed because the borders would clip into eachother
+    // a nice dose of pixel precision was needed because the fucking borders would clip into eachother
     {'I', [](const sf::Vector2f& centerPosition, const sf::Vector2f& blockSize) {
         return std::vector<sf::Vector2f>{
             {centerPosition.x - (blockSize.x/2.f) - blockSize.x, centerPosition.y},
@@ -87,6 +88,8 @@ std::map<char, std::function<std::vector<sf::Vector2f>(sf::Vector2f&, sf::Vector
         };
     }},
 };
+
+// a lot of declarations
 
 void initGrid(std::vector<Node>& gridArray);
 void drawGrid(std::vector<Node>& gridArray, std::vector<Piece>& pieceArray);

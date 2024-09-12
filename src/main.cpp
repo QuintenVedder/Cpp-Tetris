@@ -1,5 +1,6 @@
 #include "main.h"
 
+// this is the main function, nothing special
 int main(){
     window.setSize(sf::Vector2u(windowWidth, windowHeight)); 
 
@@ -29,6 +30,8 @@ int main(){
 
     return 0;
 }
+
+// this is the gameloop, it updates 60 times a second and executes certain events/actions at a certain time/interval
 void gameloop(std::vector<Node>& gridArray, bool& genPiece, std::vector<Piece>& pieceArray, float& frameCounter, float& interval){
     if(!gameover){
 

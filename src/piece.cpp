@@ -1,5 +1,6 @@
 #include "piece.h"
 
+// it calculates the position of all the blocks of a piece by its center-positions, shape and rotation
 void Piece::calculatePiecePositions() {
     positions.clear();
     switch (shape) {
@@ -128,6 +129,7 @@ void Piece::calculatePiecePositions() {
     }
 };
 
+// smashes all pieces positions in an array and returns it
 std::vector<sf::Vector2f> Piece::getAllPositions() {
     std::vector<sf::Vector2f> allPositions;
     for(sf::Vector2f position : positions){
@@ -138,24 +140,28 @@ std::vector<sf::Vector2f> Piece::getAllPositions() {
     return allPositions;
 };
 
+// speaks for itself doesn`t it
 void Piece::moveDown(){
     positions.clear();
     centerPosition = {centerPosition.x, centerPosition.y + 1.f};
     calculatePiecePositions();
 };
 
+// speaks for itself doesn`t it part2
 void Piece::moveLeft(){
     positions.clear();
     centerPosition = {centerPosition.x - 1.f, centerPosition.y};
     calculatePiecePositions();
 };
 
+// speaks for itself doesn`t it part3
 void Piece::moveRight(){
     positions.clear();
     centerPosition = {centerPosition.x + 1.f, centerPosition.y};
     calculatePiecePositions();
 };
 
+// rotates the piece by manipulating the rotation variable
 void Piece::Rotate(){
     positions.clear();
     if(rotation >= 4){

@@ -5,6 +5,7 @@
 #include <vector>
 #include "NodeStruct.h"
 
+// alot of varibales.....
 const int windowWidth = 1000;
 const int windowHeight = 1000;
 sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Tetris");
