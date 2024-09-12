@@ -5,11 +5,11 @@
 #include "NodeStruct.h"
 #include <vector>
 #include <iostream>
-#include "cpp_dump.h"
 #include "mock_piece_functions.h"
 #include <algorithm>
 #include <random>
 #include <string>
+#include <functional>
 
 const float rowLimit = 10;
 const float colLimit = 20;
