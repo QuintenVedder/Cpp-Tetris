@@ -6,12 +6,13 @@ check out https://www.sfml-dev.org/ if you are interested in sfml
 
 the executable files can be found under the name Tetris-linux-mac and /win/Tetris-windows.exe.
 
-# File structure
+# File Structure
 
-assets/ = contains a font used to display text in the game.
-build/ = consist of a makefile used for compiling the code, and a variable example file with all the needed variables
-src/ = consists of all the code files.
-win/ = consists of the windows executable and all the needed sfml files.
+- **assets/**: Contains a font used to display text in the game.
+- **build/**: Consists of a Makefile used for compiling the code, and a variable example file with all the needed variables.
+- **src/**: Consists of all the code files.
+- **win/**: Consists of the Windows executable and all the needed SFML files.
+
 
 # Compile yourself
 if you have any interest in compiling this game yourself there is a makefile and a makefile.varibales.example fiile in build/ take a look there,
