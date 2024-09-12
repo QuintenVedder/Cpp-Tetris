@@ -19,5 +19,5 @@ SFML_LIBS = -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-netw
 SRCS = ../src/main.cpp
 
 # Target executables
-TARGET_LINUX = ../Tetris-linux-mac
+TARGET_LINUX = ../Tetris-linux
 TARGET_WIN = ../win/Tetris-windows.exe
