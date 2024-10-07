@@ -19,5 +19,3 @@ if you have any interest in compiling this game yourself there is a makefile and
 all you need to do is copy pasta the makefile variables in a makfile.variable file and change the variables if needed and run make cbr.
 
 i used linux for compiling so you might need to change some commands here and there if your using windows or macOs.
-
-there is a documentation branch with minimal documentation
